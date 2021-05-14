@@ -9,8 +9,8 @@ class Config():
     # if not SECRET_KEY:
     #     raise ValueError("Secret Key Not Provided, Please add to .env file")
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')  # /app.db
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get(
         'SQLALCHEMY_TRACK_MODIFICATIONS')
     MAIL_SERVER = 'smtp.sendgrid.net'
@@ -19,3 +19,4 @@ class Config():
     MAIL_USERNAME = 'apikey'
     MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    ADMINS = ['hirejohnloveland@gmail.com']
