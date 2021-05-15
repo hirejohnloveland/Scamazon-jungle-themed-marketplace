@@ -28,4 +28,6 @@ def create_app(config_class=Config):
         from app.blueprints.main import bp as main
         app.register_blueprint(main)
 
+        from app.blueprints.products import bp as main
+        app.register_blueprint(main)
     return app
