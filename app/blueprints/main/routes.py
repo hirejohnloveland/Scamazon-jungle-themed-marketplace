@@ -1,4 +1,4 @@
-from flask.globals import current_app, request
+from flask.globals import request
 from . import bp as main
 from flask import render_template, current_app as app, url_for
 from ..products.models import Product

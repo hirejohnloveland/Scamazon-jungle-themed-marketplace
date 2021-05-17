@@ -27,7 +27,7 @@ def login():
             flash('Incorrect Username/Password. Please try again.', 'danger')
             return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
-        flash('You are now logged in', 'success')
+        flash('You are now logged in', 'warning')
         return redirect(url_for('main.index'))
     return render_template('login.html', form=form)
 
@@ -35,7 +35,7 @@ def login():
 @users.route('/logout')
 def logout():
     logout_user()
-    flash('You have successfully logged out!', 'primary')
+    flash('You have successfully logged out!', 'warning')
     return redirect(url_for('main.index'))
 
 
@@ -53,7 +53,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
+        flash('Check your email for the instructions to reset your password', 'warning')
         return redirect(url_for('users.login'))
     return render_template('reset_password_request.html', title='Reset Password', form=form)
 
@@ -73,7 +73,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset')
+        flash('Your password has been reset', 'warning')
         return redirect(url_for('users.login'))
     return render_template('reset_password.html', form=form)
 
@@ -112,7 +112,7 @@ def register():
                       recipients=[email])
         msg.body = "We appreciate your support, stay tuned..."
         mail.send(msg)
-        flash("Thank you for registering with us!", 'success')
+        flash("Thank you for registering with us!", 'warning')
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
 
@@ -127,7 +127,7 @@ def user_update():
     user = User.query.get_or_404(current_user.id)
     title = f"Update {user.username} - update"
     if user.id != current_user.id:
-        flash("You cannot update another user's account")
+        flash("You cannot update another user's account", 'danger')
         return redirect(url_for('main.index'))
     form = UserUpdateForm(user.username, user.email)
     #   user.address, user.city, user.state, user.zip_code)
