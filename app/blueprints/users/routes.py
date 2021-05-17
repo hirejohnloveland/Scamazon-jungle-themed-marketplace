@@ -7,7 +7,10 @@ from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from flask_mail import Message
-
+from app.blueprints.products.routes import is_empty
+# code for next_url routing is commented out.  Need to work on how to pass a post request.
+# from flask import request
+# from werkzeug.urls import url_parse
 
 #########################################################
 ########## LOGIN / LOGOUT ###############################
@@ -27,15 +30,18 @@ def login():
             flash('Incorrect Username/Password. Please try again.', 'danger')
             return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
-        flash('You are now logged in', 'warning')
-        return redirect(url_for('main.index'))
+        # code for next_url routing is commented out.  Need to work on how to pass a post request.
+        # next_page = request.args.get('next')
+        # if not next_page or url_parse(next_page).netloc != '':
+        #     next_page = url_for('main.index')
+        # return redirect(next_page, code=307)
     return render_template('login.html', form=form)
 
 
 @users.route('/logout')
 def logout():
     logout_user()
-    flash('You have successfully logged out!', 'warning')
+    flash('You have successfully logged out!', 'success')
     return redirect(url_for('main.index'))
 
 
@@ -53,7 +59,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password', 'warning')
+        flash('Check your email for the instructions to reset your password', 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_password_request.html', title='Reset Password', form=form)
 
@@ -73,7 +79,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset', 'warning')
+        flash('Your password has been reset', 'succcess')
         return redirect(url_for('users.login'))
     return render_template('reset_password.html', form=form)
 
@@ -112,7 +118,7 @@ def register():
                       recipients=[email])
         msg.body = "We appreciate your support, stay tuned..."
         mail.send(msg)
-        flash("Thank you for registering with us!", 'warning')
+        flash("Thank you for registering with us!", 'success')
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
 
@@ -124,6 +130,7 @@ def register():
 @users.route('/user/update', methods=['GET', 'POST'])
 @login_required
 def user_update():
+    cart_empty = is_empty()
     user = User.query.get_or_404(current_user.id)
     title = f"Update {user.username} - update"
     if user.id != current_user.id:
@@ -141,4 +148,4 @@ def user_update():
         db.session.commit()
         return redirect(url_for('main.index'))
 
-    return render_template('user_update.html', title=title, form=form, user=user)
+    return render_template('user_update.html', title=title, form=form, user=user, cart_empty=cart_empty)

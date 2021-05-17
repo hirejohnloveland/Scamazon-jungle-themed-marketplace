@@ -20,7 +20,8 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     login.login_view = 'users.login'
-    login.login_message = 'danger'
+    login.login_message = 'Please login to access the shopping cart'
+    login.login_message_category = 'warning'
     with app.app_context():
         from app.blueprints.users import bp as users
         app.register_blueprint(users)
@@ -31,5 +32,3 @@ def create_app(config_class=Config):
         from app.blueprints.products import bp as main
         app.register_blueprint(main)
     return app
-
-

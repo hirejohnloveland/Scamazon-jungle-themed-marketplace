@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-
+{%block title%}Buy Things {%endblock%}
 
 {% block content %}
 
@@ -67,11 +67,11 @@
                     <h4 class="text-center">Total: ${{sum}}</h4>
                     <form action="{{ url_for('products.clear_cart')}}" method="POST">
                         {{ form.hidden_tag() }}
-                        {{form.clear_cart(class='btn btn-danger btn-lg m-3 p-3', value='Clear Cart')}}
+                        {{form.clear_cart(class='btn btn-danger border-dark btn-lg m-3 p-3', value='Clear Cart')}}
                     </form>
                     <form action="{{ url_for('products.check_out')}}" method="POST">
                         {{ form.hidden_tag() }}
-                        {{form.check_out(class='btn btn-warning btn-lg m-3 p-3', value='Check Out')}}
+                        {{form.check_out(class='btn btn-orange-moon border-dark btn-lg m-3 p-3', value='Check Out')}}
                     </form>
 
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 
-{% block title %}Buy something!{% endblock %}
+{% block title %}Register!{% endblock %}
 
 {% block content %}
 <h1>Reigster your account!</h1>
@@ -61,7 +61,7 @@
             <span style="color: red;">[{{ error }}]</span>
             {%endfor%}
         </fieldset>
-        {{ form.submit(class='btn btn-success') }}
+        {{ form.submit(class='btn btn-orange-moon border-dark') }}
     </div>
 </form>
 
