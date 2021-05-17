@@ -7,6 +7,7 @@ import jwt
 
 
 @login.user_loader
+# Default user_loader function is provided by and required for Flask_Login to work
 def load_user(user_id):
     return User.query.get(user_id)
 
@@ -36,15 +37,15 @@ class User(db.Model, UserMixin):
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
-    # returns a jwt token object with a validity of 10 minutes (600 seconds)
-
     def get_reset_password_token(self, expires_in=600):
+        # returns a jwt token object with a validity of 10 minutes (600 seconds)
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
 
     @staticmethod
     def verify_reset_password_token(token):
+        # Verifies the jwt token is valid
         try:
             id = jwt.decode(token, app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']

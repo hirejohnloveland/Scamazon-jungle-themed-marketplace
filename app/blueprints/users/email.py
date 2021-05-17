@@ -3,7 +3,7 @@ from flask_mail import Message
 from app import mail
 from flask import render_template, current_app as app
 
-
+# async mail not working yet due to blueprints issue
 # def send_async_email(app, msg):
 #     with app.app_context():
 # mail.send(msg)
@@ -17,7 +17,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
     mail.send(msg)
     # Thread(target=send_async_email, args=(app, msg)).start()
 
-
+# generates a JSON web token and emails it to the user
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
     send_email('[Scamazon] Reset Your Password',

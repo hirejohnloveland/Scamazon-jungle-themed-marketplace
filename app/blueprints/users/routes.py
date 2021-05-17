@@ -8,9 +8,6 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from flask_mail import Message
 from app.blueprints.products.routes import is_empty
-# code for next_url routing is commented out.  Need to work on how to pass a post request.
-# from flask import request
-# from werkzeug.urls import url_parse
 
 #########################################################
 ########## LOGIN / LOGOUT ###############################
@@ -18,6 +15,7 @@ from app.blueprints.products.routes import is_empty
 
 
 @users.route('/login', methods=['GET', 'POST'])
+# route logs user out and redirects to the index
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -30,15 +28,13 @@ def login():
             flash('Incorrect Username/Password. Please try again.', 'danger')
             return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
-        # code for next_url routing is commented out.  Need to work on how to pass a post request.
-        # next_page = request.args.get('next')
-        # if not next_page or url_parse(next_page).netloc != '':
-        #     next_page = url_for('main.index')
-        # return redirect(next_page, code=307)
+        flash('You are now logged in', 'warning')
+        return redirect(url_for('main.index'))
     return render_template('login.html', form=form)
 
 
 @users.route('/logout')
+# route logs user out and redirects to the index
 def logout():
     logout_user()
     flash('You have successfully logged out!', 'success')
@@ -79,7 +75,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset', 'succcess')
+        flash('Your password has been reset', 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_password.html', form=form)
 

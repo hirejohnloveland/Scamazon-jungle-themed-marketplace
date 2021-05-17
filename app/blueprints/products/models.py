@@ -1,6 +1,6 @@
 from app import db
 
-
+# Manages all the products
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -16,7 +16,9 @@ class Product(db.Model):
         self.sm_image_url = sm_image_url
         self.lg_image_url = lg_image_url
 
-
+# Join table the manages the relationship between an individual user and an individual product
+# qty is currently set with 1 via the Add to Cart button on the Product page.  Future implementation 
+# for Javascript
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey(

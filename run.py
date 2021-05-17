@@ -5,6 +5,8 @@ from app.blueprints.products.db_init import populate_products
 
 app = create_app()
 
+# db_init is the script which initially populates the database with the items
+
 
 @app.shell_context_processor
 def make_shell_context():

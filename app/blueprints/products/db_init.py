@@ -1,13 +1,8 @@
 from app import db
 from .models import Product
-from flask import url_for, current_app as app
 
-# def __init__(self, name, desc, price, sm_image_url, lg_image_url,):
-#     self.name = name
-#     self.desc = desc
-#     self.price = price
-#     self.sm_image_url = sm_image_url
-#     self.lg_image_url = lg_image_url
+# This module is not run from within the application.  It is designed to import the products into an empty instance of the
+# database via the flask shell on deployment after db initialization, migration, and upgrade via flask_migrate
 
 
 def populate_products():
