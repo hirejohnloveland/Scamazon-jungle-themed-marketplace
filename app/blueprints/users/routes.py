@@ -123,10 +123,10 @@ def register():
         new_user.save_user()
 
         # Send welcome email to user
-        msg = Message("Thank you for registering with us",
-                      recipients=[email])
-        msg.body = "We appreciate your support, stay tuned..."
-        mail.send(msg)
+        # msg = Message("Thank you for registering with us",
+        #               recipients=[email])
+        # msg.body = "We appreciate your support, stay tuned..."
+        # mail.send(msg)
 
         flash("Thank you for registering with us!", 'success')
         return redirect(url_for('main.index'))
