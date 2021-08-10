@@ -6,8 +6,8 @@ class Config():
     FLASK_APP = os.environ.get('FLASK_APP')
     FLASK_ENV = os.environ.get('FLASK_ENV')
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    # if not SECRET_KEY:
-    #     raise ValueError("Secret Key Not Provided, Please add to .env file")
+    if not SECRET_KEY:
+        raise ValueError("Secret Key Not Provided, Please add to .env file")
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
@@ -19,6 +19,6 @@ class Config():
     MAIL_USERNAME = 'apikey'
     MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
-    ADMINS = ['hirejohnloveland@gmail.com']
+    ADMINS = [''] #Admin email config variable for logging 
     # set to 8 for testing
     ITEMS_PER_PAGE = 8

@@ -1,3 +1,5 @@
 venv/
 .env
 __pycache__
+
+# I did not include the app file here so that I could share with students

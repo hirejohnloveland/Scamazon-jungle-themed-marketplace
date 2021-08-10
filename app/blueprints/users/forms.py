@@ -42,7 +42,6 @@ class UserUpdateForm(FlaskForm):
     zip_code = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-    # Validation below requires the storage of what data is already in the database
     # Because we are trying to prevent duplicate accounts, validation below requires
     # the storage of what data is already in the form when it loads, if the user doesn't
     # change the data, don't validate it.  If the user does change it, make sure that

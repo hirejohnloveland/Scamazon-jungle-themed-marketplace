@@ -33,10 +33,27 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<User | {self.username}>'
+    
+    def save_user(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update_user(self, username, email, address, city, state, zip_code):
+        self.username = username
+        self.email = email
+        self.address = address
+        self.city = city
+        self.state = state
+        self.zip_code = zip_code
+        db.session.commit()
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
+    #The next two methods provide a JSON Web Token (JWT) which is hashed
+    # and allows for an email to be signed and sent.  The tokens are "fairly" secure
+    # but should only be valid for a short period of time in case a user's e-mail
+    # or traffic is compromised
     def get_reset_password_token(self, expires_in=600):
         # returns a jwt token object with a validity of 10 minutes (600 seconds)
         return jwt.encode(

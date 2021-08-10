@@ -15,10 +15,12 @@ from app.blueprints.products.routes import is_empty
 
 
 @users.route('/login', methods=['GET', 'POST'])
-# route logs user out and redirects to the index
+# route logs user in and redirects to the index
 def login():
+    # if the user is logged in already, this url should redirect to index
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+    # Display and validate the login form.
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -36,6 +38,7 @@ def login():
 @users.route('/logout')
 # route logs user out and redirects to the index
 def logout():
+    # flask_login used to log user out
     logout_user()
     flash('You have successfully logged out!', 'success')
     return redirect(url_for('main.index'))
@@ -47,7 +50,9 @@ def logout():
 
 
 @users.route('/reset_password_request', methods=['GET', 'POST'])
+# Route sends the user an email message with a JWT token to authenitcate a password request
 def reset_password_request():
+    # if the user is logged in already, this url should redirect to index
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
@@ -65,9 +70,12 @@ def reset_password_request():
 
 
 @users.route('/reset_password/<token>', methods=['GET', 'POST'])
+# route from password reset email
 def reset_password(token):
+    # if the user is logged in already, this url should redirect to index
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+    # Validate users token from URL and get their account
     user = User.verify_reset_password_token(token)
     if not user:
         return redirect(url_for('main.index'))
@@ -86,10 +94,11 @@ def reset_password(token):
 
 
 @users.route('/register', methods=['GET', 'POST'])
+# if the user is logged in already, this url should redirect to index
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    title = 'REGISTER'
+    # Get the user info an validate the form
     form = UserForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -99,21 +108,26 @@ def register():
         city = form.city.data
         state = form.state.data
         zip_code = form.zip_code.data
+
+        # Check for an existing account, meaning there is an email or username match
         existing_user = User.query.filter(
             (User.username == username) | (User.email == email)).all()
         if existing_user:
             flash(
                 'This account already exists. Please try, again', 'danger')
             return redirect(url_for('users.register'))
+
+        # Create new user
         new_user = User(username, password, email,
                         address, city, state, zip_code)
-        db.session.add(new_user)
-        db.session.commit()
+        new_user.save_user()
 
+        # Send welcome email to user
         msg = Message("Thank you for registering with us",
                       recipients=[email])
         msg.body = "We appreciate your support, stay tuned..."
         mail.send(msg)
+
         flash("Thank you for registering with us!", 'success')
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
@@ -126,22 +140,20 @@ def register():
 @users.route('/user/update', methods=['GET', 'POST'])
 @login_required
 def user_update():
-    cart_empty = is_empty()
+    # Get the current user account and validate permissions
     user = User.query.get_or_404(current_user.id)
     title = f"Update {user.username} - update"
     if user.id != current_user.id:
         flash("You cannot update another user's account", 'danger')
         return redirect(url_for('main.index'))
-    form = UserUpdateForm(user.username, user.email)
-    #   user.address, user.city, user.state, user.zip_code)
-    if request.method == 'POST' and form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
-        user.address = form.address.data
-        user.city = form.city.data
-        user.state = form.state.data
-        user.zip_code = form.zip_code.data
-        db.session.commit()
-        return redirect(url_for('main.index'))
 
+
+    form = UserUpdateForm(user.username, user.email)
+    if request.method == 'POST' and form.validate_on_submit():
+        user.update_user(form.username.data, form.email.data, form.address.data, form.city.data,
+        form.state.data, form.zip_code.data)
+        return redirect(url_for('main.index'))
+    
+    # Render page
+    cart_empty = is_empty()
     return render_template('user_update.html', title=title, form=form, user=user, cart_empty=cart_empty)
