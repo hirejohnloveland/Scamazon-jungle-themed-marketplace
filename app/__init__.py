@@ -12,7 +12,7 @@ login = LoginManager()
 mail = Mail()
 
 # Create the application using app factory pattern, 
-# create from confit file
+# create from config file
 def create_app(config_class=Config):
     # Create Flask app
     app = Flask(__name__)
