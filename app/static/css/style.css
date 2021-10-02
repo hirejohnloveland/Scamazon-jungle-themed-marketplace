@@ -1,12 +1,13 @@
 /* CSS for Index page display of cards */
 .card-img-top {
     width: 100%;
-    height: 15vw;
+    height: 100%;
     object-fit: cover;
 }
 
 .card {
     width: 18rem;
+    height: 100%;
 }
 
 .card-text {
