@@ -28,9 +28,10 @@ def show_product(product_id):
 
 
 @products.route('/products/add/<int:product_id>/<int:qty>', methods=['POST'])
+@login_required
 def add_to_cart(product_id, qty):
-    if not current_user.is_authenticated:
-        return redirect(url_for('users.login'))
+    # if not current_user.is_authenticated:
+    #     return redirect(url_for('users.login'))
     form = AddToCartForm()
     if form.validate_on_submit():
         user_id = current_user.id

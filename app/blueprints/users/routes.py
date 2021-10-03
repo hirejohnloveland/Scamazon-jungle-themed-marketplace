@@ -8,6 +8,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from flask_mail import Message
 from app.blueprints.products.routes import is_empty
+from werkzeug.urls import url_parse
 
 #########################################################
 ########## LOGIN / LOGOUT ###############################
@@ -31,7 +32,14 @@ def login():
             return redirect(url_for('users.login'))
         login_user(user, remember=form.remember_me.data)
         flash('You are now logged in', 'warning')
-        return redirect(url_for('main.index'))
+
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('main.index')
+            return redirect(next_page)
+        return redirect(next_page, code=307)
+        
+        # return redirect(url_for('main.index'))
     return render_template('login.html', form=form)
 
 
