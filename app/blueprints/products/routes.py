@@ -1,5 +1,6 @@
 from app.blueprints.products.forms import AddToCartForm
 from app import db
+from flask import current_app as app
 from flask.helpers import url_for
 from werkzeug.utils import redirect
 from . import bp as products
@@ -7,6 +8,7 @@ from flask import render_template, flash
 from .models import Product, Cart
 from flask_login import current_user, login_required
 from .forms import AddToCartForm, CartForm
+import stripe
 
 ##################################################################
 ############### PRODUCT INFORMATION PAGE  ########################
@@ -103,15 +105,48 @@ def clear_cart():
 ############### CHECKOUT #########################################
 ##################################################################
 
-# Page is not displayed, this route clears the cart and redirects to the index
-# This route currently is just a copy of the
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
-
-@ products.route('/cart/remove/clear', methods=['POST'])
+@ products.route('/cart/checkout', methods=['POST'])
 @ login_required
 def check_out():
-    clear_cart()
-    return redirect(url_for('main.index'))
+    items = db.session.query(Cart, Product).join(
+        Product).filter(Cart.user_id == current_user.id)
+    cart_items = []
+    for item in items:
+        cart_items.append({
+        'price_data': {
+            'currency': 'usd',
+            'product_data': {
+            'name': item[1].name,
+            },
+            'unit_amount': int(item[1].price*100),
+        },
+        'quantity': 1,
+        }
+        )
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=cart_items,
+        mode='payment',
+        success_url=url_for('products.checkout_success',_external=True),
+        cancel_url=url_for('products.show_cart', _external=True),
+    )
+
+    return redirect(session.url, code=303)
+
+##################################################################
+############### CHECKOUT SUCCESS #################################
+##################################################################
+@ products.route('/cart/checkout/success', methods=['GET'])
+@ login_required
+def checkout_success():
+    total_cart = Cart.query.filter(Cart.user_id == current_user.id)
+    for items in total_cart:
+        db.session.delete(items)
+        db.session.commit()
+    cart_empty = is_empty()
+    return render_template('success.html',cart_empty=cart_empty)
 
 ##################################################################
 ############### HELPER FUNCTIONS #################################
